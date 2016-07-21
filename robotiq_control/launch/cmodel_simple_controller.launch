@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- launch file parameters -->  
+  <arg name="ip" default="192.168.0.13" />
+  
+  <!-- CModel TCP Controller -->
+  <node name="cmodel_tcp_driver" pkg="robotiq_control" type="cmodel_tcp_driver.py" output="screen" args="$(arg ip)"/>
+  <!-- Simple Controller -->
+  <node name="robotiq_simple_controller" pkg="robotiq_control" type="robotiq_simple_controller.py" output="screen"/>
+</launch>
