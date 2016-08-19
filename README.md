@@ -49,7 +49,7 @@ You might want to add that line to your `~/.bashrc`
 
 Try the `cmodel_simple_controller`:
 ```{bash}
-roslaunch robotiq cmodel_simple_controller.launch ip:=ROBOTIQ_IP_ADDRESS
+roslaunch robotiq_control cmodel_simple_controller.launch ip:=ROBOTIQ_IP_ADDRESS
 ```
 Expected output:
 ```
