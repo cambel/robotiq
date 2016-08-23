@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-import os, sys
+import os
+import sys
+import socket
 import rospy
 from robotiq_control.cmodel_base import RobotiqCModel, ComModbusTcp
 from robotiq_msgs.msg import CModelCommand, CModelStatus
@@ -28,7 +30,13 @@ def mainLoop(address):
 
 if __name__ == '__main__':
   rospy.init_node('cmodel_tcp_driver')
+  # Verify user gave a legal IP address
   try:
-    # TODO: Add verification that the argument is an IP address
+    ip = sys.argv[1]
+    socket.inet_aton(ip)
+  except socket.error:
+    rospy.logfatal('[cmodel_tcp_driver] Please provide a valid IP address')
+  # Run the main loop
+  try:
     mainLoop(sys.argv[1])
   except rospy.ROSInterruptException: pass
