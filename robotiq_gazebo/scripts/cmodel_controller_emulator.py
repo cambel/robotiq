@@ -20,8 +20,8 @@ class ControllerEmulator(object):
     # Check that the gazebo_gripper controller exists
     #~ controller_list_srv = ns + 'controller_manager/list_controllers'
     controller_list_srv = 'controller_manager/list_controllers'
-    rospy.loginfo('Waiting for the {0} joint position controller'.format(expected_controller))
-    rospy.wait_for_service(controller_list_srv, timeout=5.0)
+    rospy.loginfo('Waiting for the {0} controller'.format(expected_controller))
+    rospy.wait_for_service(controller_list_srv, timeout=15.0)
     list_controllers = rospy.ServiceProxy(controller_list_srv, ListControllers)
     found = False
     while not rospy.is_shutdown() and not found:
