@@ -21,7 +21,7 @@ class ControllerEmulator(object):
     #~ controller_list_srv = ns + 'controller_manager/list_controllers'
     controller_list_srv = 'controller_manager/list_controllers'
     rospy.loginfo('Waiting for the {0} controller'.format(expected_controller))
-    rospy.wait_for_service(controller_list_srv, timeout=15.0)
+    rospy.wait_for_service(controller_list_srv, timeout=30.0)
     list_controllers = rospy.ServiceProxy(controller_list_srv, ListControllers)
     found = False
     while not rospy.is_shutdown() and not found:
