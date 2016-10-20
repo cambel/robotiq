@@ -46,15 +46,15 @@ class Robotiq(object):
     action_server = self.ns + 'gripper/gripper_action_controller'
     self._client = actionlib.SimpleActionClient(action_server, CModelCommandAction)
     self._goal = CModelCommandGoal()
-    rospy.loginfo("Waiting for [%s] action server" % action_server)
+    rospy.logdebug('Waiting for [%s] action server' % action_server)
     server_up = self._client.wait_for_server(timeout=rospy.Duration(10.0))
     if not server_up:
-      rospy.logerr("Timed out waiting for Gripper Controller"
-                   " Action Server to connect. Start the action server"
-                   " before running this node.")
+      rospy.logerr('Timed out waiting for Gripper Controller'
+                   ' Action Server to connect. Start the action server'
+                   ' before running this node.')
       rospy.signal_shutdown("Timed out waiting for Action Server")
       exit(1)
-    rospy.loginfo("Successfully connected to [%s]" % action_server)
+    rospy.loginfo('Robotiq successfully initialized. ns: {0}'.format(namespace))
 
   def command(self, pos, vel, force, wait=True):
     """
