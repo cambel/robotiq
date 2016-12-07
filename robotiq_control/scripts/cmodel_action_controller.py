@@ -62,18 +62,22 @@ class CModelActionController(object):
     if self._server.is_preempt_requested():
       self._preempt()
       return
+    # Clip the goal
+    position = np.clip(goal.position, self._min_gap, self._max_gap)
+    velocity = np.clip(goal.velocity, self._min_speed, self._max_speed)
+    force = np.clip(goal.force, self._min_force, self._max_force)
     # Send the goal to the gripper and feedback to the action client
     rate = rospy.Rate(self._fb_rate)
-    rospy.loginfo('%s: Moving gripper to position: %.3f ' % (self._name, goal.position))
+    rospy.loginfo('%s: Moving gripper to position: %.3f ' % (self._name, position))
     feedback = CModelCommandFeedback()
-    while not self._reached_goal(goal.position):
-      self._goto_position(goal.position, goal.velocity, goal.force)
+    while not self._reached_goal(position):
+      self._goto_position(position, velocity, force)
       if rospy.is_shutdown() or self._server.is_preempt_requested():
         self._preempt()
         return
       feedback.position = self._get_position()
       feedback.stalled = self._stalled()
-      feedback.reached_goal = self._reached_goal(goal.position)
+      feedback.reached_goal = self._reached_goal(position)
       self._server.publish_feedback(feedback)
       rate.sleep()
       if self._stalled():
@@ -82,7 +86,7 @@ class CModelActionController(object):
     result = CModelCommandResult()
     result.position = self._get_position()
     result.stalled = self._stalled()
-    result.reached_goal = self._reached_goal(goal.position)
+    result.reached_goal = self._reached_goal(position)
     self._server.set_succeeded(result)
   
   def _activate(self, timeout=5.0):
