@@ -41,7 +41,7 @@ class CModelActionController(object):
     if not working:
       return
     self._server.start()
-    rospy.loginfo(rospy.loginfo('%s: Started' % self._name))
+    rospy.logdebug('%s: Started' % self._name)
 
   def _preempt(self):
     self._stop()
@@ -68,7 +68,7 @@ class CModelActionController(object):
     force = np.clip(goal.force, self._min_force, self._max_force)
     # Send the goal to the gripper and feedback to the action client
     rate = rospy.Rate(self._fb_rate)
-    rospy.loginfo('%s: Moving gripper to position: %.3f ' % (self._name, position))
+    rospy.logdebug('%s: Moving gripper to position: %.3f ' % (self._name, position))
     feedback = CModelCommandFeedback()
     while not self._reached_goal(position):
       self._goto_position(position, velocity, force)
@@ -82,7 +82,7 @@ class CModelActionController(object):
       rate.sleep()
       if self._stalled():
         break
-    rospy.loginfo('%s: Succeeded' % self._name)
+    rospy.logdebug('%s: Succeeded' % self._name)
     result = CModelCommandResult()
     result.position = self._get_position()
     result.stalled = self._stalled()
@@ -148,7 +148,7 @@ class CModelActionController(object):
     command.rACT = 1
     command.rGTO = 0
     self._cmd_pub.publish(command)
-    rospy.loginfo('Stopping gripper in ns [%s]' % (self._ns))
+    rospy.logdebug('Stopping gripper in ns [%s]' % (self._ns))
 
 
 if __name__ == '__main__':
