@@ -13,10 +13,10 @@ class ControllerEmulator(object):
     self.position = None
     # Setup publishers and subscribers
     ns = rospy.get_namespace()
-    status_pub = rospy.Publisher('gripper/status', CModelStatus, queue_size=3)
-    gazebo_pub = rospy.Publisher('{0}/command'.format(expected_controller), Float64, queue_size=3)
-    rospy.Subscriber('gripper/command', CModelCommand, self.cb_gripper_command)
-    rospy.Subscriber('joint_states', JointState, self.cb_joint_states)
+    status_pub = rospy.Publisher('gripper/status', CModelStatus, queue_size=1)
+    gazebo_pub = rospy.Publisher('{0}/command'.format(expected_controller), Float64, queue_size=1)
+    rospy.Subscriber('gripper/command', CModelCommand, self.cb_gripper_command, queue_size=1)
+    rospy.Subscriber('joint_states', JointState, self.cb_joint_states, queue_size=1)
     # Check that the gazebo_gripper controller exists
     #~ controller_list_srv = ns + 'controller_manager/list_controllers'
     controller_list_srv = 'controller_manager/list_controllers'

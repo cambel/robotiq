@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy, os
 import numpy as np
+from sensor_msgs.msg import JointState
 # Actionlib
 from actionlib import SimpleActionServer
 from robotiq_msgs.msg import (
@@ -32,8 +33,9 @@ class CModelActionController(object):
     self._status = CModelStatus()
     self._name = self._ns + 'gripper_action_controller'
     self._server = SimpleActionServer(self._name, CModelCommandAction, execute_cb=self._execute_cb, auto_start = False)
-    rospy.Subscriber('status', CModelStatus, self._status_cb)
-    self._cmd_pub = rospy.Publisher('command', CModelCommand, queue_size=3)
+    self.js_pub = rospy.Publisher('joint_states', JointState, queue_size=1)
+    rospy.Subscriber('status', CModelStatus, self._status_cb, queue_size=1)
+    self._cmd_pub = rospy.Publisher('command', CModelCommand, queue_size=1)
     working = True
     if activate and not self._ready():
       rospy.sleep(2.0)
@@ -50,6 +52,12 @@ class CModelActionController(object):
     
   def _status_cb(self, msg):
     self._status = msg
+    # Publish the joint_states for the gripper
+    js_msg = JointState()
+    js_msg.header.stamp = rospy.Time.now()
+    js_msg.name.append('robotiq_85_left_knuckle_joint')
+    js_msg.position.append(0.8*self._status.gPO/230.)
+    self.js_pub.publish(js_msg)
     
   def _execute_cb(self, goal):
     success = True
