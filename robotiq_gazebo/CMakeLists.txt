@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp 
   gazebo_ros
   control_toolbox
+  xmlrpcpp
 )
 
 find_package(gazebo REQUIRED)
@@ -16,6 +17,7 @@ catkin_package(
     roscpp 
     gazebo_ros
     control_toolbox
+    xmlrpcpp
 )
 
 link_directories(${GAZEBO_LIBRARY_DIRS})
