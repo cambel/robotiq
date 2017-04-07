@@ -14,25 +14,19 @@
       </actuator>
     </transmission>
     
+    <!-- Mimic joints -->
     <gazebo>
-        <!-- loading plugin: mimic joints works in gazebo now -->
       <plugin filename="libgazebo_mimic_joint_plugin.so" name="${prefix}mimic_robotiq_85_1">
         <joint>${prefix}robotiq_85_left_knuckle_joint</joint>
         <mimicJoint>${prefix}robotiq_85_right_knuckle_joint</mimicJoint>
-        <!--multiplier>1.0</multiplier>
-        <offset>0.0</offset-->
       </plugin>
       <plugin filename="libgazebo_mimic_joint_plugin.so" name="${prefix}mimic_robotiq_85_2">
         <joint>${prefix}robotiq_85_left_knuckle_joint</joint>
         <mimicJoint>${prefix}robotiq_85_left_inner_knuckle_joint</mimicJoint>
-        <!--multiplier>1.0</multiplier>
-        <offset>0.0</offset-->
       </plugin>
       <plugin filename="libgazebo_mimic_joint_plugin.so" name="${prefix}mimic_robotiq_85_3">
         <joint>${prefix}robotiq_85_left_knuckle_joint</joint>
         <mimicJoint>${prefix}robotiq_85_right_inner_knuckle_joint</mimicJoint>
-        <!--multiplier>1.0</multiplier>
-        <offset>0.0</offset-->
       </plugin>
       <plugin filename="libgazebo_mimic_joint_plugin.so" name="${prefix}mimic_robotiq_85_4">
         <joint>${prefix}robotiq_85_left_knuckle_joint</joint>
