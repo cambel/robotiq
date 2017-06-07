@@ -42,7 +42,8 @@ class ControllerEmulator(object):
     status.gACT = 1
     status.gSTA = 3
     while not rospy.is_shutdown():
-      status.gPO = int(round( 230*self.position/0.8 ))
+      gPO = int(round(230*self.position/0.8))
+      status.gPO = min(max(0, gPO), 255)
       status_pub.publish(status)
       rospy.sleep(0.05)
       gazebo_pub.publish(self.jnt_command)
