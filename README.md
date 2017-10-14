@@ -21,30 +21,31 @@ ROS metapackage developed by the [Control Robotics Intelligence Group](http://ww
 Go to your ROS working directory. e.g.
 ```{bash}
 cd ~/catkin_ws/src
-``` 
+```
 
-Clone this repository:
+Clone these repository:
 ```{bash}
 git clone https://github.com/crigroup/robotiq.git
-``` 
+git clone https://github.com/crigroup/openrave_catkin.git
+```
 
 Install any missing dependencies using rosdep:
 ```{bash}
 rosdep update
 rosdep install --from-paths . --ignore-src -y
-``` 
+```
 
 Now compile your ROS workspace. e.g.
 ```{bash}
 cd ~/catkin_ws && catkin_make
-``` 
+```
 
 ### Testing the Installation
 
 Be sure to always source the appropriate ROS setup file, e.g:
 ```{bash}
 source ~/catkin_ws/devel/setup.bash
-``` 
+```
 You might want to add that line to your `~/.bashrc`
 
 Try the `cmodel_simple_controller`:
