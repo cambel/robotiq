@@ -24,6 +24,7 @@ class CModelActionController(object):
     # Read configuration parameters
     self._fb_rate = read_parameter(self._ns + 'gripper_action_controller/publish_rate', 60.0)
     self._min_gap = read_parameter(self._ns + 'gripper_action_controller/min_gap', 0.0)
+    self._min_gap_counts = read_parameter(self._ns + 'gripper_action_controller/min_gap_counts', 230.)
     self._max_gap = read_parameter(self._ns + 'gripper_action_controller/max_gap', 0.085)
     self._min_speed = read_parameter(self._ns + 'gripper_action_controller/min_speed', 0.013)
     self._max_speed = read_parameter(self._ns + 'gripper_action_controller/max_speed', 0.1)
@@ -49,16 +50,16 @@ class CModelActionController(object):
     self._stop()
     rospy.loginfo('%s: Preempted' % self._name)
     self._server.set_preempted()
-    
+
   def _status_cb(self, msg):
     self._status = msg
     # Publish the joint_states for the gripper
     js_msg = JointState()
     js_msg.header.stamp = rospy.Time.now()
     js_msg.name.append('robotiq_85_left_knuckle_joint')
-    js_msg.position.append(0.8*self._status.gPO/230.)
+    js_msg.position.append(0.8*self._status.gPO/self._min_gap_counts)
     self.js_pub.publish(js_msg)
-    
+
   def _execute_cb(self, goal):
     success = True
     # Check that the gripper is active. If not, activate it.
@@ -96,7 +97,7 @@ class CModelActionController(object):
     result.stalled = self._stalled()
     result.reached_goal = self._reached_goal(position)
     self._server.set_succeeded(result)
-  
+
   def _activate(self, timeout=5.0):
     command = CModelCommand();
     command.rACT = 1
@@ -115,12 +116,12 @@ class CModelActionController(object):
       rospy.sleep(0.1)
     rospy.loginfo('Successfully activated gripper in ns [%s]' % (self._ns))
     return True
-  
+
   def _get_position(self):
     gPO = self._status.gPO
-    pos = np.clip((self._max_gap - self._min_gap)/(-230.)*(gPO-230.), self._min_gap, self._max_gap)
+    pos = np.clip((self._max_gap - self._min_gap)/(-self._min_gap_counts)*(gPO-self._min_gap_counts), self._min_gap, self._max_gap)
     return pos
-  
+
   def _goto_position(self, pos, vel, force):
     """
     Goto position with desired force and velocity
@@ -134,23 +135,23 @@ class CModelActionController(object):
     command = CModelCommand()
     command.rACT = 1
     command.rGTO = 1
-    command.rPR = int(np.clip((-230)/(self._max_gap - self._min_gap) * (pos - self._min_gap) + 230., 0, 230))
+    command.rPR = int(np.clip((-self._min_gap_counts)/(self._max_gap - self._min_gap) * (pos - self._min_gap) + self._min_gap_counts, 0, self._min_gap_counts))
     command.rSP = int(np.clip((255)/(self._max_speed - self._min_speed) * (vel - self._min_speed), 0, 255))
     command.rFR = int(np.clip((255)/(self._max_force - self._min_force) * (force - self._min_force), 0, 255))
     self._cmd_pub.publish(command)
-  
+
   def _moving(self):
     return self._status.gGTO == 1 and self._status.gOBJ == 0
-  
+
   def _reached_goal(self, goal, tol = 0.003):
     return (abs(goal - self._get_position()) < tol)
-  
+
   def _ready(self):
     return self._status.gSTA == 3 and self._status.gACT == 1
-  
+
   def _stalled(self):
     return self._status.gOBJ == 1 or self._status.gOBJ == 2
-  
+
   def _stop(self):
     command = CModelCommand()
     command.rACT = 1
