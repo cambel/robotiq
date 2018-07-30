@@ -1,44 +1,254 @@
 def myProg():
-  # begin: URCap Installation Node
-  #   Source: Robotiq_2-Finger_Adaptive_Gripper, 1.1.3, Robotiq Inc.
-  #   Type: Gripper
-
+  # THIS IS A MODIFIED VERSION OR THE ROBOTIQ URCAP
   ###########################################
   #######Gripper URCap preamble start########
   #######Version null########
   
-#   #aliases for the gripper variable names
-#   ACT = 1
-#   GTO = 2
-#   ATR = 3
-#   ARD = 4
-#   FOR = 5
-#   SPE = 6
-#   OBJ = 7
-#   STA = 8
-#   FLT = 9
-#   POS = 10
-#   PRE = 11
+  #aliases for the gripper variable names
+  ACT = 1
+  GTO = 2
+  ATR = 3
+  ARD = 4
+  FOR = 5
+  SPE = 6
+  OBJ = 7
+  STA = 8
+  FLT = 9
+  POS = 10
+  PRE = 11
   
   def rq_init_connection(gripper_sid=9, gripper_socket="1"):
   	socket_open("127.0.0.1",63352, gripper_socket)
   	socket_set_var("SID", gripper_sid,  gripper_socket)
   	ack = socket_read_byte_list(3, gripper_socket)
   end
+
+  ##########################
+
+  # Returns True if list_of_bytes is [3, 'a', 'c', 'k']
+  def is_ack(list_of_bytes):
   
-#   def rq_set_sid(gripper_sid=9, gripper_socket="1"):
-# 	socket_set_var("SID", gripper_sid,  gripper_socket)
-# 	sync()
-# 	return is_ack(socket_read_byte_list(3, gripper_socket))
-#   end
+  	# list length is not 3
+  	if (list_of_bytes[0] != 3):
+  		return False
+  	end
   
-#   def rq_activate(gripper_socket="1"):
+  	# first byte not is 'a'?
+  	if (list_of_bytes[1] != 97):
+  		return False
+  	end
+  
+  	# first byte not is 'c'?
+  	if (list_of_bytes[2] != 99):
+  		return False
+  	end
+  
+  	# first byte not is 'k'?
+  	if (list_of_bytes[3] != 107):
+  		return False
+  	end
+  
+  	return True
+  end
+  
+  # Returns True if list_of_bytes is not [3, 'a', 'c', 'k']
+  def is_not_ack(list_of_bytes):
+  	if (is_ack(list_of_bytes)):
+  		return False
+  	else:
+  		return True
+  	end
+  end
+
+  ##################
+
+  def rq_set_var(var_name, var_value, gripper_socket="1"):
+  
+  	sync()
+  	if (var_name == ACT):
+  		socket_set_var("ACT", var_value, gripper_socket)
+  	elif (var_name == GTO):
+  		socket_set_var("GTO", var_value, gripper_socket)
+  	elif (var_name == ATR):
+  		socket_set_var("ATR", var_value, gripper_socket)
+  	elif (var_name == ARD):
+  		socket_set_var("ARD", var_value, gripper_socket)
+  	elif (var_name == FOR):
+  		socket_set_var("FOR", var_value, gripper_socket)
+  	elif (var_name == SPE):
+  		socket_set_var("SPE", var_value, gripper_socket)
+  	elif (var_name == POS):
+  		socket_set_var("POS", var_value, gripper_socket)
+  	else:
+  	end
+  
+  	sync()
+  	ack = socket_read_byte_list(3, gripper_socket)
+  	sync()
+  
+  	while(is_not_ack(ack)):
+  
+  		textmsg("rq_set_var : retry", " ...")
+  		textmsg("rq_set_var : var_name = ", var_name)
+  		textmsg("rq_set_var : var_value = ", var_value)
+  
+  		if (ack[0] != 0):
+  			textmsg("rq_set_var : invalid ack value = ", ack)
+  		end
+  
+  		socket_set_var(var_name , var_value,gripper_socket)
+  		sync()
+  		ack = socket_read_byte_list(3, gripper_socket)
+  		sync()
+  	end
+  end
+
+  ############################
+  #### Loads of convenience functions it seems
+  
+  def is_STA_gripper_activated (list_of_bytes):
+  	if (list_of_bytes[0] != 1):
+  		return False
+  	end
+  	if (list_of_bytes[1] == 51):
+  		return True
+  	end
+  	return False
+  end
+  
+  def is_OBJ_object_detected (list_of_bytes):
+  	if (list_of_bytes[0] != 1):
+  		return False
+  	end
+  	if (list_of_bytes[1] == 50):
+  		return True
+  	end
+  	if (list_of_bytes[1]  == 49):
+  		return True
+  	end
+  	return False
+  end
+  
+  def is_OBJ_gripper_at_position (list_of_bytes):
+  	if (list_of_bytes[0] != 1):
+  		return False
+  	end
+  	if (list_of_bytes[1] == 51):
+  		return True
+  	end
+  	return False
+  end
+  
+  def is_not_OBJ_gripper_at_position (list_of_bytes):
+  	if (is_OBJ_gripper_at_position(list_of_bytes)):
+  		return False
+  	else:
+  		return True
+  	end
+  end
+  
+  def is_FLT_no_fault(list_of_bytes):
+  	if (list_of_bytes[0] != 2):
+  		return False
+  	end
+  	if (list_of_bytes[1] != 48):
+  		return False
+  	end
+  	if (list_of_bytes[2] != 48):
+  		return False
+  	end
+  	return True
+  end
+  
+  def is_FLT_action_delayed(list_of_bytes):
+  	if (list_of_bytes[0] != 2):
+  		return False
+  	end
+  	if (list_of_bytes[1] != 48):
+  		return False
+  	end
+  	if (list_of_bytes[2] != 53):
+  		return False
+  	end
+  	return True
+  end
+  
+  def is_FLT_not_activated(list_of_bytes):
+  	if (list_of_bytes[0] != 2):
+  		return False
+  	end
+  	if (list_of_bytes[1] != 48):
+  		return False
+  	end
+  	if (list_of_bytes[2] != 55):
+  		return False
+  	end
+  	return True
+  end
+  
+  def is_FLT_autorelease_in_progress(list_of_bytes):
+  	if (list_of_bytes[0] != 2):
+  		return False
+  	end
+  	if (list_of_bytes[1] != 49):
+  		return False
+  	end
+  	if (list_of_bytes[2] != 49):
+  		return False
+  	end
+  	return True
+  end
+  
+  def is_FLT_overcurrent(list_of_bytes):
+  	if (list_of_bytes[0] != 2):
+  		return False
+  	end
+  	if (list_of_bytes[1] != 49):
+  		return False
+  	end
+  	if (list_of_bytes[2] != 52):
+  		return False
+  	end
+  	return True
+  end
+  
+  def is_FLT_autorelease_completed(list_of_bytes):
+  	if (list_of_bytes[0] != 2):
+  		return False
+  	end
+  	if (list_of_bytes[1] != 49):
+  		return False
+  	end
+  	if (list_of_bytes[2] != 53):
+  		return False
+  	end
+  	return True
+  end
+
+  ###############
+  
+  def rq_set_sid(gripper_sid=9, gripper_socket="1"):
+    socket_set_var("SID", gripper_sid,  gripper_socket)
+    sync()
+    return is_ack(socket_read_byte_list(3, gripper_socket))
+  end
+    
+#   def rq_reset(gripper_socket="1"):
 #   	rq_gripper_act = 0
-# 		if (not rq_is_gripper_activated(gripper_socket)):
-# 			rq_reset(gripper_socket)
-# 		end
-#   	rq_set_var(ACT,1, gripper_socket)
+#   	rq_obj_detect = 0
+#   	rq_mov_complete = 0
+  
+#   	rq_set_var(ACT,0, gripper_socket)
+#   	rq_set_var(ATR,0, gripper_socket)
 #   end
+
+  # def rq_activate(gripper_socket="1"):
+  # 	rq_gripper_act = 0
+	# 	if (not rq_is_gripper_activated(gripper_socket)):
+	# 		rq_reset(gripper_socket)
+	# 	end
+  # 	rq_set_var(ACT,1, gripper_socket)
+  # end
   
 #   def rq_activate_and_wait(gripper_socket="1"):
 #   	rq_activate(gripper_socket)
@@ -51,15 +261,7 @@ def myProg():
 #   def rq_stop(gripper_socket="1"):
 #   	rq_set_var(GTO,0, gripper_socket)
 #   end
-  
-#   def rq_reset(gripper_socket="1"):
-#   	rq_gripper_act = 0
-#   	rq_obj_detect = 0
-#   	rq_mov_complete = 0
-  
-#   	rq_set_var(ACT,0, gripper_socket)
-#   	rq_set_var(ATR,0, gripper_socket)
-#   end
+
   
 #   def rq_auto_release_open_and_wait(gripper_socket="1"):
   
@@ -311,269 +513,8 @@ def myProg():
 #   	end
 #   end
   
-#   # Returns True if list_of_bytes is [3, 'a', 'c', 'k']
-#   def is_ack(list_of_bytes):
+
   
-#   	# list length is not 3
-#   	if (list_of_bytes[0] != 3):
-#   		return False
-#   	end
-  
-#   	# first byte not is 'a'?
-#   	if (list_of_bytes[1] != 97):
-#   		return False
-#   	end
-  
-#   	# first byte not is 'c'?
-#   	if (list_of_bytes[2] != 99):
-#   		return False
-#   	end
-  
-#   	# first byte not is 'k'?
-#   	if (list_of_bytes[3] != 107):
-#   		return False
-#   	end
-  
-#   	return True
-#   end
-  
-#   # Returns True if list_of_bytes is not [3, 'a', 'c', 'k']
-#   def is_not_ack(list_of_bytes):
-#   	if (is_ack(list_of_bytes)):
-#   		return False
-#   	else:
-#   		return True
-#   	end
-#   end
-  
-#   def is_STA_gripper_activated (list_of_bytes):
-  
-#   	# list length is not 1
-#   	if (list_of_bytes[0] != 1):
-#   		return False
-#   	end
-  
-#   	# byte is '3'?
-#   	if (list_of_bytes[1] == 51):
-#   		return True
-#   	end
-  
-#   	return False
-#   end
-  
-#   # Returns True if list_of_byte is [1, '1'] or [1, '2']
-#   # Used to test OBJ = 0x1 or OBJ = 0x2
-#   def is_OBJ_object_detected (list_of_bytes):
-  
-#   	# list length is not 1
-#   	if (list_of_bytes[0] != 1):
-#   		return False
-#   	end
-  
-#   	# byte is '2'?
-#   	if (list_of_bytes[1] == 50):
-#   		return True
-#   	end
-  
-#   	# byte is '1'?
-#   	if (list_of_bytes[1]  == 49):
-#   		return True
-#   	end
-  
-#   	return False
-  
-#   end
-  
-#   # Returns True if list_of_byte is [1, '3']
-#   # Used to test OBJ = 0x3
-#   def is_OBJ_gripper_at_position (list_of_bytes):
-  
-#   	# list length is not 1
-#   	if (list_of_bytes[0] != 1):
-#   		return False
-#   	end
-  
-#   	# byte is '3'?
-#   	if (list_of_bytes[1] == 51):
-#   		return True
-#   	end
-  
-#   	return False
-#   end
-  
-#   def is_not_OBJ_gripper_at_position (list_of_bytes):
-  
-#   	if (is_OBJ_gripper_at_position(list_of_bytes)):
-#   		return False
-#   	else:
-#   		return True
-#   	end
-#   end
-  
-#   def is_FLT_no_fault(list_of_bytes):
-  
-#   	# list length is not 2
-#   	if (list_of_bytes[0] != 2):
-#   		return False
-#   	end
-  
-#   	# first byte is '0'?
-#   	if (list_of_bytes[1] != 48):
-#   		return False
-#   	end
-  
-#   	# second byte is '0'?
-#   	if (list_of_bytes[2] != 48):
-#   		return False
-#   	end
-  
-#   	return True
-  
-#   end
-  
-#   def is_FLT_action_delayed(list_of_bytes):
-  
-#   	# list length is not 2
-#   	if (list_of_bytes[0] != 2):
-#   		return False
-#   	end
-  
-#   	# first byte is '0'?
-#   	if (list_of_bytes[1] != 48):
-#   		return False
-#   	end
-  
-#   	# second byte is '5'?
-#   	if (list_of_bytes[2] != 53):
-#   		return False
-#   	end
-  
-#   	return True
-#   end
-  
-#   def is_FLT_not_activated(list_of_bytes):
-  
-#   	# list length is not 2
-#   	if (list_of_bytes[0] != 2):
-#   		return False
-#   	end
-  
-#   	# first byte is '0'?
-#   	if (list_of_bytes[1] != 48):
-#   		return False
-#   	end
-  
-#   	# second byte is '7'?
-#   	if (list_of_bytes[2] != 55):
-#   		return False
-#   	end
-  
-#   	return True
-#   end
-  
-#   def is_FLT_autorelease_in_progress(list_of_bytes):
-  
-#   	# list length is not 2
-#   	if (list_of_bytes[0] != 2):
-#   		return False
-#   	end
-  
-#   	# first byte is '1'?
-#   	if (list_of_bytes[1] != 49):
-#   		return False
-#   	end
-  
-#   	# second byte is '1'?
-#   	if (list_of_bytes[2] != 49):
-#   		return False
-#   	end
-  
-#   	return True
-  
-#   end
-  
-#   def is_FLT_overcurrent(list_of_bytes):
-  
-#   	# list length is not 2
-#   	if (list_of_bytes[0] != 2):
-#   		return False
-#   	end
-  
-#   	# first byte is '1'?
-#   	if (list_of_bytes[1] != 49):
-#   		return False
-#   	end
-  
-#   	# second byte is '4'?
-#   	if (list_of_bytes[2] != 52):
-#   		return False
-#   	end
-  
-#   	return True
-  
-#   end
-  
-#   def is_FLT_autorelease_completed(list_of_bytes):
-  
-#   	# list length is not 2
-#   	if (list_of_bytes[0] != 2):
-#   		return False
-#   	end
-  
-#   	# first byte is '1'?
-#   	if (list_of_bytes[1] != 49):
-#   		return False
-#   	end
-  
-#   	# second byte is '5'?
-#   	if (list_of_bytes[2] != 53):
-#   		return False
-#   	end
-  
-#   	return True
-  
-#   end
-  
-#   def rq_set_var(var_name, var_value, gripper_socket="1"):
-  
-#   	sync()
-#   	if (var_name == ACT):
-#   		socket_set_var("ACT", var_value, gripper_socket)
-#   	elif (var_name == GTO):
-#   		socket_set_var("GTO", var_value, gripper_socket)
-#   	elif (var_name == ATR):
-#   		socket_set_var("ATR", var_value, gripper_socket)
-#   	elif (var_name == ARD):
-#   		socket_set_var("ARD", var_value, gripper_socket)
-#   	elif (var_name == FOR):
-#   		socket_set_var("FOR", var_value, gripper_socket)
-#   	elif (var_name == SPE):
-#   		socket_set_var("SPE", var_value, gripper_socket)
-#   	elif (var_name == POS):
-#   		socket_set_var("POS", var_value, gripper_socket)
-#   	else:
-#   	end
-  
-#   	sync()
-#   	ack = socket_read_byte_list(3, gripper_socket)
-#   	sync()
-  
-#   	while(is_not_ack(ack)):
-  
-#   		textmsg("rq_set_var : retry", " ...")
-#   		textmsg("rq_set_var : var_name = ", var_name)
-#   		textmsg("rq_set_var : var_value = ", var_value)
-  
-#   		if (ack[0] != 0):
-#   			textmsg("rq_set_var : invalid ack value = ", ack)
-#   		end
-  
-#   		socket_set_var(var_name , var_value,gripper_socket)
-#   		sync()
-#   		ack = socket_read_byte_list(3, gripper_socket)
-#   		sync()
-#   	end
-#   end
   
   
 #   def rq_get_var(var_name, nbr_bytes, gripper_socket="1"):
@@ -656,8 +597,8 @@ def myProg():
   textmsg("start")
   rq_init_connection()
   textmsg("debug1")
-#   rq_set_sid()
-#   textmsg("debug2")
+  rq_set_sid()
+  textmsg("debug2")
 #   rq_activate()
 #   textmsg("debug3")
 #   rq_move_and_wait(0)   # open
