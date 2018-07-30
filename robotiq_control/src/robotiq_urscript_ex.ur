@@ -103,6 +103,28 @@ def myProg():
   	end
   end
 
+  def rq_get_var(var_name, nbr_bytes, gripper_socket="1"):
+  	if (var_name == FLT):
+  		socket_send_string("GET FLT",gripper_socket)
+  		sync()
+  	elif (var_name == OBJ):
+  		socket_send_string("GET OBJ",gripper_socket)
+  		sync()
+  	elif (var_name == STA):
+  		socket_send_string("GET STA",gripper_socket)
+  		sync()
+  	elif (var_name == PRE):
+  		socket_send_string("GET PRE",gripper_socket)
+  		sync()
+  	else:
+  	end
+  
+  	var_value = socket_read_byte_list(nbr_bytes, gripper_socket)
+  	sync()
+  
+  	return var_value
+  end
+
   ############################
   #### Loads of convenience functions it seems
   
@@ -233,35 +255,128 @@ def myProg():
     return is_ack(socket_read_byte_list(3, gripper_socket))
   end
     
-#   def rq_reset(gripper_socket="1"):
-#   	rq_gripper_act = 0
-#   	rq_obj_detect = 0
-#   	rq_mov_complete = 0
+  def rq_reset(gripper_socket="1"):
+  	rq_gripper_act = 0
+  	rq_obj_detect = 0
+  	rq_mov_complete = 0
   
-#   	rq_set_var(ACT,0, gripper_socket)
-#   	rq_set_var(ATR,0, gripper_socket)
-#   end
+  	rq_set_var(ACT,0, gripper_socket)
+  	rq_set_var(ATR,0, gripper_socket)
+  end
 
-  # def rq_activate(gripper_socket="1"):
-  # 	rq_gripper_act = 0
-	# 	if (not rq_is_gripper_activated(gripper_socket)):
-	# 		rq_reset(gripper_socket)
-	# 	end
-  # 	rq_set_var(ACT,1, gripper_socket)
+  def rq_is_gripper_activated(gripper_socket="1"):
+  	gSTA = rq_get_var(STA, 1, gripper_socket)
+  
+  	if(is_STA_gripper_activated(gSTA)):
+  		rq_gripper_act = 1
+  		return True
+  	else:
+  		rq_gripper_act = 0
+  		return False
+  	end
+  end
+
+  def rq_activate(gripper_socket="1"):
+  	rq_gripper_act = 0
+		if (not rq_is_gripper_activated(gripper_socket)):
+			rq_reset(gripper_socket)
+		end
+  	rq_set_var(ACT,1, gripper_socket)
+  end
+  
+  def rq_activate_and_wait(gripper_socket="1"):
+  	rq_activate(gripper_socket)
+  
+  	while(not rq_is_gripper_activated(gripper_socket)):
+  		# wait for activation completed
+  	end
+  end
+
+  ###################
+  
+  def rq_stop(gripper_socket="1"):
+  	rq_set_var(GTO,0, gripper_socket)
+  end
+
+  # reset the rGTO to prevent movement and
+  # set the position
+  def rq_set_pos(pos, gripper_socket="1"):
+  	rq_set_var(GTO,0, gripper_socket)
+  
+  	rq_set_var(POS, pos, gripper_socket)
+  
+  	gPRE = rq_get_var(PRE, 3, gripper_socket)
+  	pre = (gPRE[1] - 48)*100 + (gPRE[2] -48)*10 + gPRE[3] - 48
+  	sync()
+  	while (pre != pos):
+          rq_set_var(POS, pos, gripper_socket)
+  		gPRE = rq_get_var(PRE, 3, gripper_socket)
+  		pre = (gPRE[1] - 48)*100 + (gPRE[2] -48)*10 + gPRE[3] - 48
+  		sync()
+  	end
+  end
+
+  def rq_go_to(gripper_socket="1"):
+  	rq_set_var(GTO,1, gripper_socket)
+  end
+  
+  def rq_move(pos, gripper_socket="1"):
+  	rq_mov_complete = 0
+  	rq_obj_detect = 0
+  
+  	rq_set_pos(pos, gripper_socket)
+  	rq_go_to(gripper_socket)
+  end
+
+  def rq_is_object_detected(gripper_socket="1"):
+  	gOBJ = rq_get_var(OBJ, 1, gripper_socket)
+  
+  	if(is_OBJ_object_detected(gOBJ)):
+  		rq_obj_detect = 1
+  		return True
+  	else:
+  		rq_obj_detect = 0
+  		return False
+  	end
+  end
+
+  def rq_is_motion_complete(gripper_socket="1"):
+  	rq_mov_complete = 0
+  
+  	gOBJ = rq_get_var(OBJ, 1, gripper_socket)
+  	sleep(0.01)
+  
+  	if (is_OBJ_gripper_at_position(gOBJ)):
+  		rq_mov_complete = 1
+  		return True
+  	end
+  
+  	if (is_OBJ_object_detected(gOBJ)):
+  		rq_mov_complete = 1
+  		return True
+  	end
+  
+  	return False
+  end
+  
+  # def rq_move_and_wait(pos, gripper_socket="1"):
+  # 	rq_move(pos, gripper_socket)
+  
+  # 	while (not rq_is_motion_complete(gripper_socket)):
+  # 		# wait for motion completed
+  # 		sleep(0.01)
+  # 		sync()
+  # 	end
+  
+  # 	# following code used for compatibility with previous versions
+  # 	rq_is_object_detected(gripper_socket)
+  
+  # 	if (rq_obj_detect != 1):
+  # 		rq_mov_complete = 1
+  # 	end
   # end
-  
-#   def rq_activate_and_wait(gripper_socket="1"):
-#   	rq_activate(gripper_socket)
-  
-#   	while(not rq_is_gripper_activated(gripper_socket)):
-#   		# wait for activation completed
-#   	end
-#   end
-  
-#   def rq_stop(gripper_socket="1"):
-#   	rq_set_var(GTO,0, gripper_socket)
-#   end
 
+  
   
 #   def rq_auto_release_open_and_wait(gripper_socket="1"):
   
@@ -312,31 +427,6 @@ def myProg():
 #   	rq_move_and_wait(255, gripper_socket)
 #   end
   
-#   def rq_move(pos, gripper_socket="1"):
-#   	rq_mov_complete = 0
-#   	rq_obj_detect = 0
-  
-#   	rq_set_pos(pos, gripper_socket)
-#   	rq_go_to(gripper_socket)
-#   end
-  
-#   def rq_move_and_wait(pos, gripper_socket="1"):
-#   	rq_move(pos, gripper_socket)
-  
-#   	while (not rq_is_motion_complete(gripper_socket)):
-#   		# wait for motion completed
-#   		sleep(0.01)
-#   		sync()
-#   	end
-  
-#   	# following code used for compatibility with previous versions
-#   	rq_is_object_detected(gripper_socket)
-  
-#   	if (rq_obj_detect != 1):
-#   		rq_mov_complete = 1
-#   	end
-#   end
-  
 #   def rq_wait(gripper_socket="1"):
 #           # Wait for the gripper motion to complete
 #           while (not rq_is_motion_complete(gripper_socket)):
@@ -350,72 +440,6 @@ def myProg():
   
 #   	if (rq_obj_detect != 1):
 #   		rq_mov_complete = 1
-#   	end
-#   end
-  
-#   def rq_go_to(gripper_socket="1"):
-#   	rq_set_var(GTO,1, gripper_socket)
-#   end
-  
-#   # reset the rGTO to prevent movement and
-#   # set the position
-#   def rq_set_pos(pos, gripper_socket="1"):
-#   	rq_set_var(GTO,0, gripper_socket)
-  
-#   	rq_set_var(POS, pos, gripper_socket)
-  
-#   	gPRE = rq_get_var(PRE, 3, gripper_socket)
-#   	pre = (gPRE[1] - 48)*100 + (gPRE[2] -48)*10 + gPRE[3] - 48
-#   	sync()
-#   	while (pre != pos):
-#           rq_set_var(POS, pos, gripper_socket)
-#   		gPRE = rq_get_var(PRE, 3, gripper_socket)
-#   		pre = (gPRE[1] - 48)*100 + (gPRE[2] -48)*10 + gPRE[3] - 48
-#   		sync()
-#   	end
-#   end
-  
-#   def rq_is_motion_complete(gripper_socket="1"):
-#   	rq_mov_complete = 0
-  
-#   	gOBJ = rq_get_var(OBJ, 1, gripper_socket)
-#   	sleep(0.01)
-  
-#   	if (is_OBJ_gripper_at_position(gOBJ)):
-#   		rq_mov_complete = 1
-#   		return True
-#   	end
-  
-#   	if (is_OBJ_object_detected(gOBJ)):
-#   		rq_mov_complete = 1
-#   		return True
-#   	end
-  
-#   	return False
-  
-#   end
-  
-#   def rq_is_gripper_activated(gripper_socket="1"):
-#   	gSTA = rq_get_var(STA, 1, gripper_socket)
-  
-#   	if(is_STA_gripper_activated(gSTA)):
-#   		rq_gripper_act = 1
-#   		return True
-#   	else:
-#   		rq_gripper_act = 0
-#   		return False
-#   	end
-#   end
-  
-#   def rq_is_object_detected(gripper_socket="1"):
-#   	gOBJ = rq_get_var(OBJ, 1, gripper_socket)
-  
-#   	if(is_OBJ_object_detected(gOBJ)):
-#   		rq_obj_detect = 1
-#   		return True
-#   	else:
-#   		rq_obj_detect = 0
-#   		return False
 #   	end
 #   end
   
@@ -515,31 +539,6 @@ def myProg():
   
 
   
-  
-  
-#   def rq_get_var(var_name, nbr_bytes, gripper_socket="1"):
-  
-#   	if (var_name == FLT):
-#   		socket_send_string("GET FLT",gripper_socket)
-#   		sync()
-#   	elif (var_name == OBJ):
-#   		socket_send_string("GET OBJ",gripper_socket)
-#   		sync()
-#   	elif (var_name == STA):
-#   		socket_send_string("GET STA",gripper_socket)
-#   		sync()
-#   	elif (var_name == PRE):
-#   		socket_send_string("GET PRE",gripper_socket)
-#   		sync()
-#   	else:
-#   	end
-  
-#   	var_value = socket_read_byte_list(nbr_bytes, gripper_socket)
-#   	sync()
-  
-#   	return var_value
-#   end
-  
 #   ############################################
 #   # normalized functions (maps 0-100 to 0-255)
 #   ############################################
@@ -599,10 +598,15 @@ def myProg():
   textmsg("debug1")
   rq_set_sid()
   textmsg("debug2")
-#   rq_activate()
-#   textmsg("debug3")
+  rq_activate()
+  textmsg("debug3")
+  rq_move(0)   # open
+  textmsg("debug4")
+  sleep(1)
+  rq_move(255)   # open
+  textmsg("debug5")
 #   rq_move_and_wait(0)   # open
-#   textmsg("debug4")
+#   textmsg("debug6")
 #   rq_move_and_wait(255) # closed
-#   textmsg("debug5")
+#   textmsg("debug7")
 end
