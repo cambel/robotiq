@@ -8,7 +8,6 @@ import os, rospkg
 class RobotiqCModelURScript:
   def __init__(self, topic):
     #Initiate output message as an empty list
-    self.message = []
     self.status = CModelStatus()
     self.pub = rospy.Publisher(topic, std_msgs.msg.String, queue_size=1)
     self.rospack = rospkg.RosPack()
@@ -40,20 +39,11 @@ class RobotiqCModelURScript:
   def sendCommand(self, command):
     # Limit the value of each variable
     command = self.verifyCommand(command)
-    # Initiate command as an empty list
-    self.message = []
-    # Build the command with each output variable
-    self.message.append(command.rACT + (command.rGTO << 3) + (command.rATR << 4))
-    self.message.append(0)
-    self.message.append(0)
-    self.message.append(command.rPR)
-    self.message.append(command.rSP)
-    self.message.append(command.rFR)
     
-    command_script = self.buildCommandProgram(self.message)
+    command_script = self.buildCommandProgram(command)
     self.pub.publish(command_script)
-    rospy.loginfo("Sleeping for 2 seconds for the gripper")
-    rospy.sleep(2)
+    rospy.loginfo("Sleeping for .5 seconds for the gripper")
+    rospy.sleep(.5)
     
     # Set status, assuming that the command succeeded
     self.status.gACT = command.rACT
@@ -80,17 +70,20 @@ class RobotiqCModelURScript:
   def buildCommandProgram(self, message):
     """Constructs a program to send to the robot."""
     complete_program = ""
-    # TODO: Add the first few lines of the program
     
-
-    # Add the rest of the program containing the gripper URCap definitions
-    program_template = open(os.path.join(self.rospack.get_path("robotiq_control"), "src", "robotiq_urscript_ex.ur"), 'rb')
+    # Construct the program containing the gripper URCap definitions
+    program_template = open(os.path.join(self.rospack.get_path("robotiq_control"), "src", "robotiq_urscript_move.ur"), 'rb')
     program_line = program_template.read(1024)
     while program_line:
         #complete_program += program_line.decode()
         complete_program += program_line
         program_line = program_template.read(1024)
     
+    # Add the parts with the commands we received
+    # TODO: Allow force + speed setting here instead of just setting the position
+    complete_program += "rq_move("+str(message.rPR)+")\n"
+    complete_program += "end"
+
     # Wrap as std_msgs/String
     program_msg = std_msgs.msg.String()
     program_msg.data = complete_program
