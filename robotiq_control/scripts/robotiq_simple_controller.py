@@ -67,6 +67,7 @@ def askForCommand(command):
   strAskForCommand += 'l: Slower\n'
   strAskForCommand += 'i: Increase force\n'
   strAskForCommand += 'd: Decrease force\n'
+  strAskForCommand += 'x: Exit\n'
   strAskForCommand += '-->'
   return raw_input(strAskForCommand)
 
@@ -78,7 +79,10 @@ def publisher():
   pub = rospy.Publisher('command', CModelCommand, queue_size=3)
   command = CModelCommand()
   while not rospy.is_shutdown():
-    command = genCommand(askForCommand(command), command)
+    s = askForCommand(command)
+    if s == 'x':
+      break
+    command = genCommand(s, command)
     pub.publish(command)
     rospy.sleep(0.1)
 
