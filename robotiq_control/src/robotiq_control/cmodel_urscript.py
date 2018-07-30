@@ -57,11 +57,13 @@ class RobotiqCModelURScript:
     
     # Set status, assuming that the command succeeded
     self.status.gACT = command.rACT
-    self.status.gGTO = command.rGTO
-    self.status.gFLT = command.rFLT
+    # self.status.gGTO = command.rGTO
+    # self.status.gSTA = command.rSTA
+    # self.status.gOBJ = command.rOBJ
+    # self.status.gFLT = command.rFLT
     self.status.gPR  = command.rPR 
-    self.status.gPO  = command.rPO 
-    self.status.gCU  = command.rCU 
+    # self.status.gPO  = command.rPO 
+    # self.status.gCU  = command.rCU 
     return True
 
   def getStatus(self):
@@ -76,9 +78,9 @@ class RobotiqCModelURScript:
 
 
   def buildCommandProgram(self, message):
-    """Constructs a """
+    """Constructs a program to send to the robot."""
     complete_program = ""
-    # Add the first few lines of the program
+    # TODO: Add the first few lines of the program
     
 
     # Add the rest of the program containing the gripper URCap definitions
