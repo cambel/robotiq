@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from robotiq_msgs.msg import CModelStatus
+from robotiq_msgs.msg import CModelStatus, CModelCommand
 import rospy
 import std_msgs.msg
 
@@ -9,8 +9,14 @@ class RobotiqCModelURScript:
   def __init__(self, topic):
     #Initiate output message as an empty list
     self.status = CModelStatus()
+    self.last_command = CModelCommand()
     self.pub = rospy.Publisher(topic, std_msgs.msg.String, queue_size=1)
     self.rospack = rospkg.RosPack()
+
+    self.is_moving = False
+    self.is_closing = False
+    self.command_received_time = rospy.get_rostime()
+    self.status_update_timer = rospy.Timer(rospy.Duration(.1), self.updateStatus)
 
   def verifyCommand(self, command):
     # Verify that each variable is in its correct range
@@ -40,20 +46,47 @@ class RobotiqCModelURScript:
     # Limit the value of each variable
     command = self.verifyCommand(command)
     
+    # TODO: This does not cover other messages (e.g. set force/speed), but is good enough for our current needs
+    if command.rPR == self.last_command.rPR and command.rACT == self.last_command.rACT:
+      rospy.logdebug("Ignoring command that was sent again")
+      return
+
     command_script = self.buildCommandProgram(command)
     self.pub.publish(command_script)
+    self.last_command = command
     
     # Set status, assuming that the command succeeded
     # https://robotiq.com/support/2f-85-2f-140/downloads-instruction-manual Section 4
     self.status.gACT = command.rACT
     self.status.gGTO = command.rGTO
-    # self.status.gOBJ = command.rOBJ
-    # self.status.gFLT = command.rFLT
-    self.status.gPR  = command.rPR 
-    self.status.gPO  = command.rPR
-    # self.status.gCU  = command.rCU 
     self.status.gSTA = 3    # This pretends that the hand is online
+
+    if command.rGTO == 1 and command.rPR < 10:  # Gripper opens
+      self.status.gOBJ = 0   # Pretend that no object was grasped
+      self.is_moving = True
+      self.is_closing = False
+    if command.rGTO == 1 and command.rPR > 200:
+      self.is_moving = True
+      self.is_closing = True
+    self.command_received_time = rospy.get_rostime()
+
+    self.status.gFLT = 0 # Fault
+    self.status.gPR  = command.rPR
+    # self.status.gPO  = command.rPR    # The "actual" position is set by updateStatus after a delay
+    self.status.gCU  = 10 # Current 
     return True
+
+  def updateStatus(self, timerevent):
+    if self.is_moving:
+      time_since_command = rospy.get_rostime() - self.command_received_time
+      # This duration should cover sending delay + UR parsing time + gripper mvt time
+      if time_since_command > rospy.Duration(1.0):    
+        if self.is_closing:
+          self.status.gOBJ = 1
+        self.is_moving = False
+        self.is_closing = False
+        self.status.gPO = self.status.gPR
+        rospy.logdebug("Update status to gPO = " + str(self.status.gPO))
 
   def getStatus(self):
     """
