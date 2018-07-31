@@ -42,17 +42,15 @@ class RobotiqCModelURScript:
     
     command_script = self.buildCommandProgram(command)
     self.pub.publish(command_script)
-    rospy.loginfo("Sleeping for .5 seconds for the gripper")
-    rospy.sleep(.5)
     
     # Set status, assuming that the command succeeded
     # https://robotiq.com/support/2f-85-2f-140/downloads-instruction-manual Section 4
     self.status.gACT = command.rACT
-    # self.status.gGTO = command.rGTO
+    self.status.gGTO = command.rGTO
     # self.status.gOBJ = command.rOBJ
     # self.status.gFLT = command.rFLT
     self.status.gPR  = command.rPR 
-    # self.status.gPO  = command.rPO 
+    self.status.gPO  = command.rPR
     # self.status.gCU  = command.rCU 
     self.status.gSTA = 3    # This pretends that the hand is online
     return True
@@ -82,6 +80,8 @@ class RobotiqCModelURScript:
     # TODO: Allow force + speed setting here instead of just setting the position
     complete_program += "rq_move("+str(message.rPR)+")\n"
     complete_program += "end"
+
+    rospy.loginfo("Sending command to go to pos "+str(message.rPR))
 
     # Wrap as std_msgs/String
     program_msg = std_msgs.msg.String()
