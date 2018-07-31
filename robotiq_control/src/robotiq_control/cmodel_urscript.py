@@ -46,14 +46,15 @@ class RobotiqCModelURScript:
     rospy.sleep(.5)
     
     # Set status, assuming that the command succeeded
+    # https://robotiq.com/support/2f-85-2f-140/downloads-instruction-manual Section 4
     self.status.gACT = command.rACT
     # self.status.gGTO = command.rGTO
-    # self.status.gSTA = command.rSTA
     # self.status.gOBJ = command.rOBJ
     # self.status.gFLT = command.rFLT
     self.status.gPR  = command.rPR 
     # self.status.gPO  = command.rPO 
     # self.status.gCU  = command.rCU 
+    self.status.gSTA = 3    # This pretends that the hand is online
     return True
 
   def getStatus(self):
@@ -64,8 +65,6 @@ class RobotiqCModelURScript:
 
   def disconnectFromDevice(self):
     """Close connection"""
-    # self.client.close()
-
 
   def buildCommandProgram(self, message):
     """Constructs a program to send to the robot."""
