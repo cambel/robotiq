@@ -1,5 +1,5 @@
 def myProg():
-  # THIS IS A MODIFIED VERSION OR THE ROBOTIQ URCAP
+  # THIS IS A MODIFIED VERSION OF THE ROBOTIQ URCAP
   ###########################################
   #######Gripper URCap preamble start########
   #######Version null########

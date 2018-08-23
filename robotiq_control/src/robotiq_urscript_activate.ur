@@ -1,5 +1,5 @@
 def myProg():
-  # THIS IS A MODIFIED VERSION OR THE ROBOTIQ URCAP  
+  # THIS IS A MODIFIED VERSION OF THE ROBOTIQ URCAP  
   #aliases for the gripper variable names
   ACT = 1
   GTO = 2
