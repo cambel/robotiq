@@ -46,8 +46,7 @@ class RobotiqCModelURScript:
     # Limit the value of each variable
     command = self.verifyCommand(command)
     
-    # TODO: This does not cover other messages (e.g. set force/speed), but is good enough for our current needs
-    if command.rPR == self.last_command.rPR and command.rACT == self.last_command.rACT:
+    if command.rPR == self.last_command.rPR and command.rACT == self.last_command.rACT and command.rFR == self.last_command.rFR and command.rSP == self.last_command.rSP:
       rospy.logdebug("Ignoring command that was sent again")
       return
 
@@ -102,15 +101,17 @@ class RobotiqCModelURScript:
     complete_program = ""
     
     # Construct the program containing the gripper URCap definitions
-    program_template = open(os.path.join(self.rospack.get_path("robotiq_control"), "src", "robotiq_urscript_move.ur"), 'rb')
+    program_template = open(os.path.join(self.rospack.get_path("robotiq_control"), "src", "robotiq_urscript.script"), 'rb')
     program_line = program_template.read(1024)
     while program_line:
         #complete_program += program_line.decode()
         complete_program += program_line
         program_line = program_template.read(1024)
     
-    # Add the parts with the commands we received
-    # TODO: Allow force + speed setting here instead of just setting the position
+    # Add the parts with the commands we received. 
+    # Setting force/speed every time is a bit wasteful, but it is good enough for now.
+    complete_program += "rq_set_force("+str(message.rFR)+")\n"
+    complete_program += "rq_set_speed("+str(message.rSP)+")\n"
     complete_program += "rq_move("+str(message.rPR)+")\n"
     complete_program += "end"
 

@@ -1,4 +1,4 @@
-def myProg():
+def robotiqGripperCommand():
   # THIS IS A MODIFIED VERSION OF THE ROBOTIQ URCAP  
   #aliases for the gripper variable names
   ACT = 1
@@ -112,7 +112,6 @@ def myProg():
     sync()
     return is_ack(socket_read_byte_list(3, gripper_socket))
   end
-    
   def rq_reset(gripper_socket="1"):
   	rq_gripper_act = 0
   	rq_obj_detect = 0
@@ -121,7 +120,6 @@ def myProg():
   	rq_set_var(ACT,0, gripper_socket)
   	rq_set_var(ATR,0, gripper_socket)
   end
-
   def rq_is_gripper_activated(gripper_socket="1"):
   	gSTA = rq_get_var(STA, 1, gripper_socket)
   
@@ -141,9 +139,41 @@ def myProg():
 		end
   	rq_set_var(ACT,1, gripper_socket)
   end
-  ##############################################33
-  textmsg("start")
+  ###################
+  def rq_set_pos(pos, gripper_socket="1"):
+  	rq_set_var(GTO,0, gripper_socket)
+  
+  	rq_set_var(POS, pos, gripper_socket)
+  
+  	gPRE = rq_get_var(PRE, 3, gripper_socket)
+  	pre = (gPRE[1] - 48)*100 + (gPRE[2] -48)*10 + gPRE[3] - 48
+  	sync()
+  	while (pre != pos):
+          rq_set_var(POS, pos, gripper_socket)
+  		gPRE = rq_get_var(PRE, 3, gripper_socket)
+  		pre = (gPRE[1] - 48)*100 + (gPRE[2] -48)*10 + gPRE[3] - 48
+  		sync()
+  	end
+  end
+  def rq_go_to(gripper_socket="1"):
+  	rq_set_var(GTO,1, gripper_socket)
+  end
+  def rq_move(pos, gripper_socket="1"):
+  	rq_mov_complete = 0
+  	rq_obj_detect = 0
+  
+  	rq_set_pos(pos, gripper_socket)
+  	rq_go_to(gripper_socket)
+  end
+  #################################
+  def rq_set_force(force, gripper_socket="1"):
+  	rq_set_var(FOR,force, gripper_socket)
+  end
+  
+  def rq_set_speed(speed, gripper_socket="1"):
+  	rq_set_var(SPE,speed, gripper_socket)
+  end
+  # The main content should be inserted manually below, with a closing "end"
   rq_init_connection()
   rq_set_sid()
   rq_activate()
-end
