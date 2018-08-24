@@ -115,7 +115,7 @@ class RobotiqCModelURScript:
     complete_program += "rq_move("+str(message.rPR)+")\n"
     complete_program += "end"
 
-    rospy.loginfo("Sending command to go to pos "+str(message.rPR))
+    rospy.loginfo("Sending command to go to pos " + str(message.rPR) + " with force " + str(message.rFR) + " and speed " + str(message.rSP))
 
     # Wrap as std_msgs/String
     program_msg = std_msgs.msg.String()
