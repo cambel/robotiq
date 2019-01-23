@@ -18,6 +18,8 @@ class RobotiqCModelURScript:
     self.command_received_time = rospy.get_rostime()
     self.status_update_timer = rospy.Timer(rospy.Duration(.1), self.updateStatus)
 
+    self.long_move = False # Hacky
+
   def verifyCommand(self, command):
     # Verify that each variable is in its correct range
     command.rACT = max(0, command.rACT)
@@ -72,18 +74,26 @@ class RobotiqCModelURScript:
     self.status.gFLT = 0 # Fault
     self.status.gPR  = command.rPR
     # self.status.gPO  = command.rPR    # The "actual" position is set by updateStatus after a delay
-    self.status.gCU  = 10 # Current 
+    self.status.gCU  = 10 # Current
+
+    ## Hacky
+    if command.rGTO == 1 and command.rSP < 50:  # Gripper opens
+      self.long_move = True
     return True
 
   def updateStatus(self, timerevent):
     if self.is_moving:
       time_since_command = rospy.get_rostime() - self.command_received_time
       # This duration should cover sending delay + UR parsing time + gripper mvt time
-      if time_since_command > rospy.Duration(1.0):    
+      if (not self.long_move and time_since_command > rospy.Duration(1.0)) or (self.long_move and time_since_command > rospy.Duration(4.0)):
+      # if time_since_command > rospy.Duration(1.0):
+      #   if self.long_move and time_since_command < rospy.Duration(4.0)):
+      #     return
         if self.is_closing:
           self.status.gOBJ = 1
         self.is_moving = False
         self.is_closing = False
+        self.long_move = False
         self.status.gPO = self.status.gPR
         rospy.logdebug("Update status to gPO = " + str(self.status.gPO))
 
