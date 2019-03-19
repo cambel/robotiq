@@ -176,4 +176,6 @@ def robotiqGripperCommand():
   # The main content should be inserted manually below, with a closing "end"
   rq_init_connection()
   rq_set_sid()
-  rq_activate()
+  if not rq_is_gripper_activated():
+  	rq_activate()
+  end
