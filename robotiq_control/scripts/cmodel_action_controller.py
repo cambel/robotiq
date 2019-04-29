@@ -30,11 +30,13 @@ class CModelActionController(object):
     self._max_speed = read_parameter(self._ns + 'gripper_action_controller/max_speed', 0.1)
     self._min_force = read_parameter(self._ns + 'gripper_action_controller/min_force', 40.0)
     self._max_force = read_parameter(self._ns + 'gripper_action_controller/max_force', 100.0)
+    self._gripper_prefix = read_parameter(self._ns + 'gripper_prefix', "")   # Used for updating joint state
     # Configure and start the action server
     self._status = CModelStatus()
     self._name = self._ns + 'gripper_action_controller'
     self._server = SimpleActionServer(self._name, CModelCommandAction, execute_cb=self._execute_cb, auto_start = False)
     self.js_pub = rospy.Publisher('joint_states', JointState, queue_size=1)
+    self.js_pub_global = rospy.Publisher('/joint_states', JointState, queue_size=1)
     rospy.Subscriber('status', CModelStatus, self._status_cb, queue_size=1)
     self._cmd_pub = rospy.Publisher('command', CModelCommand, queue_size=1)
     working = True
@@ -59,6 +61,11 @@ class CModelActionController(object):
     js_msg.name.append('robotiq_85_left_knuckle_joint')
     js_msg.position.append(0.8*self._status.gPO/self._min_gap_counts)
     self.js_pub.publish(js_msg)
+    js_msg.name = []
+    js_msg.name.append(self._gripper_prefix + 'robotiq_85_left_knuckle_joint')
+    self.js_pub_global.publish(js_msg)
+
+    
 
   def _execute_cb(self, goal):
     success = True
@@ -166,4 +173,4 @@ if __name__ == '__main__':
   rospy.loginfo('Starting [%s] node' % node_name)
   cmodel_server = CModelActionController()
   rospy.spin()
-  rospy.loginfo('Shuting down [%s] node' % node_name)
+  rospy.loginfo('Shutting down [%s] node' % node_name)
