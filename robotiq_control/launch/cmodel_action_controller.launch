@@ -3,14 +3,16 @@
   <!-- launch file parameters -->  
   <arg name="ip" default="192.168.0.13" />
   <arg name="namespace" default="gripper" />
-  <arg name="gripper_prefix" default="" />   
+  <arg name="gripper_prefix" default="" />
+  <arg name="action_controller" default="cmodel_action_controller" />
   
   <group ns="$(arg namespace)">
     <!-- CModel TCP Controller -->
     <node name="cmodel_tcp_driver" pkg="robotiq_control" type="cmodel_tcp_driver.py" output="screen" args="$(arg ip)"/>
     <param name="gripper_prefix"  type="str" value="$(arg gripper_prefix)"/>
     <!-- Simple action controller -->
-    <rosparam file="$(find robotiq_control)/config/cmodel_action_controller.yaml" command="load" />
-    <node name="cmodel_action_controller" pkg="robotiq_control" type="cmodel_action_controller.py" output="screen" />
+    <rosparam file="$(find robotiq_control)/config/$(arg cmodel_action_controller).yaml" command="load" />
+    <node name="cmodel_action_controller" pkg="robotiq_control"
+	  type="(arg cmodel_action_controller).py" output="screen" />
   </group>
 </launch>
