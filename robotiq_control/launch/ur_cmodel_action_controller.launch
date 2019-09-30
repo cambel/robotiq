@@ -4,7 +4,7 @@
   <arg name="topic" default="/b_bot_controller/ur_driver/URScript" />
   <arg name="namespace" default="gripper" />
   <arg name="gripper_prefix" default="" />  
-  <arg name="action_controller" default="cmodel_action_controller" />
+  <arg name="cmodel_action_controller" default="cmodel_action_controller" />
   
   <group ns="$(arg namespace)">
     <!-- CModel TCP Controller -->
