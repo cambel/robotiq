@@ -2,6 +2,7 @@ gripper_action_controller:
   # Feedback rate in Hz
   publish_rate: 100
   min_gap_counts: 224
+  counts_to_meters: 0.8
   # Gripper width in meters [0, 0.085]
   min_gap:    0.0
   max_gap:    0.085
@@ -11,3 +12,5 @@ gripper_action_controller:
   # Gripper force in N. [40, 100]
   min_force:  40.0
   max_force:  100.0
+  # Joint name
+  joint_name: robotiq_85_left_knuckle_joint

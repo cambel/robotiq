@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="robotiq_hande" >
+  <!-- robotiq_hande_gripper -->
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_hande.urdf.xacro" />
+  <xacro:robotiq_hande prefix="hande_" parent="base_link" MAC="_000000000004">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </xacro:robotiq_hande>
+
+  <link name="base_link" />
+
+  <gazebo>
+    <plugin filename="libgazebo_ros_joint_state_publisher.so" name="hande_joint_state">
+      <ros>
+        <argument>~/out:=hande_joint_states</argument>
+      </ros>
+      <update_rate>25</update_rate>
+      <joint_name>hande_joint_finger</joint_name>
+    </plugin>
+  </gazebo>
+</robot>
