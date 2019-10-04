@@ -112,8 +112,8 @@
         <kd>9</kd>
         <min_velocity>20</min_velocity>
         <max_velocity>150</max_velocity>
-        <joint>${prefix}joint_finger</joint>
-        <joint>robotiq_hande_base_to_${prefix}right_finger</joint>
+        <joint>${prefix}robotiq_hande_joint_finger</joint>
+        <joint>robotiq_hande_base_to_${prefix}robotiq_hande_right_finger</joint>
       </plugin>
     </gazebo>
   </xacro:macro>
