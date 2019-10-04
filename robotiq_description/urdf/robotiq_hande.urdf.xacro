@@ -96,7 +96,7 @@
       <limit effort="130" lower="0" upper="0.025" velocity="0.15"/>
     </joint>
 
-    <joint name="robotiq_hande_base_to_${prefix}robotiq_hande_right_finger" type="prismatic">
+    <joint name="${prefix}robotiq_hande_base_to_right_finger" type="prismatic">
       <origin xyz="0.099 0 0" rpy="0 0 0"/>
       <parent link="${prefix}robotiq_hande_base_link"/>
       <child link="${prefix}robotiq_hande_right_finger"/>
@@ -105,15 +105,22 @@
       <mimic joint="${prefix}robotiq_hande_joint_finger" multiplier="1" offset="0"/>
     </joint>
 
+    <transmission name="${prefix}robotiq_hande_joint_finger_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="${prefix}robotiq_hande_joint_finger">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="${prefix}robotiq_hande_joint_finger_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </actuator>
+    </transmission>
+
     <gazebo>
-      <plugin filename="librobotiq_gripper_gazebo_plugin.so" name="hrim_actuator_gripper${MAC}">
-        <kp>500</kp>
-        <ki>3</ki>
-        <kd>9</kd>
-        <min_velocity>20</min_velocity>
-        <max_velocity>150</max_velocity>
+      <plugin filename="libgazebo_mimic_joint_plugin.so"
+	      name="${prefix}mimic_robotiq_hande">
         <joint>${prefix}robotiq_hande_joint_finger</joint>
-        <joint>robotiq_hande_base_to_${prefix}robotiq_hande_right_finger</joint>
+        <mimicJoint>${prefix}robotiq_hande_base_to_right_finger</mimicJoint>
       </plugin>
     </gazebo>
   </xacro:macro>
