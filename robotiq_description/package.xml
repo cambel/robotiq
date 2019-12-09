@@ -13,7 +13,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>rospy</depend>
-  <depend>openrave_catkin</depend>
+  <!-- <depend>openrave_catkin</depend> -->
 
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>urdf</exec_depend>
