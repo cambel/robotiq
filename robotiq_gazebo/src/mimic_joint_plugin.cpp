@@ -170,9 +170,9 @@ void MimicJointPlugin::UpdateChild()
   static ros::Duration period(world_->Physics()->GetMaxStepSize());
 
   // Set mimic joint's angle based on joint's angle
-  double angle = joint_->GetAngle(0).Radian()*multiplier_+offset_;
+  double angle = joint_->Position(0)*multiplier_+offset_;
   
-  if(abs(angle-mimic_joint_->GetAngle(0).Radian())>=sensitiveness_)
+  if(abs(angle-mimic_joint_->Position(0))>=sensitiveness_)
   {
     if(has_pid_)
     {
