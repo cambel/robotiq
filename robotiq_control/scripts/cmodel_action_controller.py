@@ -42,6 +42,7 @@ class CModelActionController(object):
     rospy.Subscriber('status', CModelStatus, self._status_cb, queue_size=1)
     self._cmd_pub = rospy.Publisher('command', CModelCommand, queue_size=1)
     working = True
+    rospy.sleep(1.0)   # Wait before checking status with self._ready()
     if activate and not self._ready():
       rospy.sleep(2.0)
       working = self._activate()
@@ -161,7 +162,7 @@ class CModelActionController(object):
     return self._status.gGTO == 1 and self._status.gOBJ == 0
 
   def _reached_goal(self, goal, tol = 0.003):
-    rospy.loginfo('REACHED_GOAL: goal=%f, current=%f'%(goal, self._get_position()))
+    # rospy.loginfo('REACHED_GOAL: goal=%f, current=%f'%(goal, self._get_position()))
     return (abs(goal - self._get_position()) < tol)
 
   def _ready(self):

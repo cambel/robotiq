@@ -18,6 +18,13 @@ class RobotiqCModelURScript:
     self.command_received_time = rospy.get_rostime()
     self.status_update_timer = rospy.Timer(rospy.Duration(.1), self.updateStatus)
 
+    # Set hand to active, as it is activated automatically
+    self.status.gACT = 1
+    self.status.gSTA = 3
+    rospy.sleep(1) # Wait for publisher before sending activation script
+    s = self.buildCommandProgram(CModelCommand(), request_activate_only=True)
+    self.pub.publish(s)
+
     self.long_move = False # Hacky
 
   def verifyCommand(self, command):
@@ -95,7 +102,7 @@ class RobotiqCModelURScript:
         self.is_closing = False
         self.long_move = False
         self.status.gPO = self.status.gPR
-        rospy.logdebug("Update status to gPO = " + str(self.status.gPO))
+        rospy.loginfo("Update status to gPO = " + str(self.status.gPO))
 
   def getStatus(self):
     """
@@ -106,7 +113,7 @@ class RobotiqCModelURScript:
   def disconnectFromDevice(self):
     """Close connection"""
 
-  def buildCommandProgram(self, message):
+  def buildCommandProgram(self, message, request_activate_only=False):
     """Constructs a program to send to the robot."""
     complete_program = ""
     
@@ -120,13 +127,21 @@ class RobotiqCModelURScript:
     
     # Add the parts with the commands we received. 
     # Setting force/speed every time is a bit wasteful, but it is good enough for now.
-    complete_program += "rq_set_force("+str(message.rFR)+")\n"
-    complete_program += "rq_set_speed("+str(message.rSP)+")\n"
-    complete_program += "rq_move("+str(message.rPR)+")\n"
+    if request_activate_only: # Do not request move if only activation is requested
+      complete_program += "rq_set_force("+str(255)+")\n"
+      complete_program += "rq_set_speed("+str(150)+")\n"
+    else:
+      complete_program += "rq_set_force("+str(message.rFR)+")\n"
+      complete_program += "rq_set_speed("+str(message.rSP)+")\n"
+      complete_program += "rq_move("+str(message.rPR)+")\n"
+      
     complete_program += "end"
 
-    rospy.loginfo("Sending command to go to pos " + str(message.rPR) + " with force " + str(message.rFR) + " and speed " + str(message.rSP))
-
+    if request_activate_only: # The URscript automatically checks and performs gripper activation
+      rospy.loginfo("Activating gripper if necessary.")
+    else:
+      rospy.loginfo("Sending command to go to pos " + str(message.rPR) + " with force " + str(message.rFR) + " and speed " + str(message.rSP))
+    
     # Wrap as std_msgs/String
     program_msg = std_msgs.msg.String()
     program_msg.data = complete_program
