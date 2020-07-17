@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <!-- launch file parameters -->  
-  <arg name="topic" default="/b_bot_controller/ur_driver/URScript" />
+  <arg name="topic" default="/ur_hardware_interface/script_command" />
   
   <!-- CModel TCP Controller -->
   <node name="cmodel_urscript_driver" pkg="robotiq_control" type="cmodel_urscript_driver.py" output="screen" args="$(arg topic)"/>
