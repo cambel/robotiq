@@ -117,7 +117,7 @@ class CModelActionController(object):
     self._server.set_succeeded(result)
 
   def _activate(self, timeout=5.0):
-    command = CModelCommand();
+    command = CModelCommand()
     command.rACT = 1
     command.rGTO = 1
     command.rSP  = 255
@@ -128,7 +128,7 @@ class CModelActionController(object):
         self._preempt()
         return False
       if rospy.get_time() - start_time > timeout:
-        rospy.logwarn('Failed to activated gripper in ns [%s]' % (self._ns))
+        rospy.logwarn('Failed to activate gripper in ns [%s]' % (self._ns))
         return False
       self._cmd_pub.publish(command)
       rospy.sleep(0.1)
