@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- launch file parameters -->  
+  <arg name="address" default="192.168.1.41" />
+  
+  <arg name="namespace" default="gripper" />
+  <arg name="gripper_prefix" default="" />  
+  <arg name="config"		default="cmodel_action_controller" />
+  
+  <group ns="$(arg namespace)">
+    <!-- CModel URCap Controller -->
+    <node name="cmodel_urcap_driver" pkg="robotiq_control" type="cmodel_urcap_driver.py" output="screen" args="$(arg address)"/>
+    <param name="gripper_prefix" type="str" value="$(arg gripper_prefix)"/>
+    <!-- Simple action controller -->
+    <rosparam file="$(find robotiq_control)/config/$(arg config).yaml"
+	      command="load" />
+    <node name="cmodel_action_controller" pkg="robotiq_control"
+	  type="cmodel_action_controller.py" output="screen" />
+  </group>
+</launch>
