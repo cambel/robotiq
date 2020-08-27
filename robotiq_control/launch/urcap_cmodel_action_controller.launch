@@ -12,8 +12,7 @@
     <node name="cmodel_urcap_driver" pkg="robotiq_control" type="cmodel_urcap_driver.py" output="screen" args="$(arg address)"/>
     <param name="gripper_prefix" type="str" value="$(arg gripper_prefix)"/>
     <!-- Simple action controller -->
-    <rosparam file="$(find robotiq_control)/config/$(arg config).yaml"
-	      command="load" />
+    <rosparam file="$(find robotiq_control)/config/$(arg config).yaml" command="load" />
     <node name="cmodel_action_controller" pkg="robotiq_control"
 	  type="cmodel_action_controller.py" output="screen" />
   </group>
