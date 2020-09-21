@@ -159,8 +159,8 @@ class RobotiqCModelURCap:
 
         print("Waiting for activation")
         # wait for activation to go through
-        while not self.is_active():
-            time.sleep(0.001)
+        while not self.is_active() and not rospy.is_shutdown():
+            time.sleep(0.01)
         print("Activated.")
         # auto-calibrate position range if desired
         if auto_calibrate:
@@ -169,7 +169,7 @@ class RobotiqCModelURCap:
     def is_active(self):
         """Returns whether the gripper is active."""
         status = self._get_var(self.STA)
-        return Gripper2f85.GripperStatus(status) == Gripper2f85.GripperStatus.ACTIVE
+        return self.GripperStatus(status) == self.GripperStatus.ACTIVE
 
     def get_min_position(self):
         """Returns the minimum position the gripper can reach (open position)."""
@@ -206,19 +206,19 @@ class RobotiqCModelURCap:
         """
         # first try to open in case we are holding an object
         (position, status) = self.move_and_wait_for_pos(self.get_open_position(), 64, 1)
-        if Gripper2f85.ObjectStatus(status) != Gripper2f85.ObjectStatus.AT_DEST:
+        if self.ObjectStatus(status) != self.ObjectStatus.AT_DEST:
             raise RuntimeError("Calibration failed opening to start:  " + str(status))
 
         # try to close as far as possible, and record the number
         (position, status) = self.move_and_wait_for_pos(self.get_closed_position(), 64, 1)
-        if Gripper2f85.ObjectStatus(status) != Gripper2f85.ObjectStatus.AT_DEST:
+        if self.ObjectStatus(status) != self.ObjectStatus.AT_DEST:
             raise RuntimeError("Calibration failed because of an object: " +  str(status))
         assert position <= self._max_position
         self._max_position = position
 
         # try to open as far as possible, and record the number
         (position, status) = self.move_and_wait_for_pos(self.get_open_position(), 64, 1)
-        if Gripper2f85.ObjectStatus(status) != Gripper2f85.ObjectStatus.AT_DEST:
+        if self.ObjectStatus(status) != self.ObjectStatus.AT_DEST:
             raise RuntimeError("Calibration failed because of an object: " +  str(status))
         assert position >= self._min_position
         self._min_position = position
@@ -268,19 +268,19 @@ class RobotiqCModelURCap:
 
         # wait until not moving
         cur_obj = self._get_var(self.OBJ)
-        while Gripper2f85.ObjectStatus(cur_obj) == Gripper2f85.ObjectStatus.MOVING:
+        while self.ObjectStatus(cur_obj) == self.ObjectStatus.MOVING:
             cur_obj = self._get_var(self.OBJ)
 
         # report the actual position and the object status
         final_pos = self._get_var(self.POS)
         final_obj = cur_obj
-        return final_pos, Gripper2f85.ObjectStatus(final_obj)
+        return final_pos, self.ObjectStatus(final_obj)
 
 
 if __name__ == '__main__':
-    gripper = Gripper2f85()
-    gripper.connect('192.168.1.41', 63352)
-    # gripper.activate()
+    gripper = RobotiqCModelURCap('192.168.1.41')
+    # gripper.connect('192.168.1.41', 63352)
+    gripper.activate()
     gripper.move_and_wait_for_pos(100, 255, 255)
     gripper.move_and_wait_for_pos(150, 255, 255)
     gripper.move_and_wait_for_pos(100, 255, 255)
