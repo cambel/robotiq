@@ -81,6 +81,16 @@
         </geometry>
       </collision>
     </link>
+
+    <gazebo reference="${prefix}hand_e_link">
+      <material>Gazebo/FlatBlack</material>
+    </gazebo>
+    <gazebo reference="${prefix}hande_right_finger">
+      <material>Gazebo/Grey</material>
+    </gazebo>
+    <gazebo reference="${prefix}hande_left_finger">
+      <material>Gazebo/Grey</material>
+    </gazebo>
     <joint name="${prefix}hande_left_finger_joint" type="prismatic">
       <origin rpy="0 0 0" xyz="0 0 0.099"/>
       <parent link="hand_e_link"/>
