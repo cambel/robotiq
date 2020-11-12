@@ -1,4 +1,5 @@
 # Gripper controller
+gripper_type: '85'
 gripper_controller:
   gripper_type: '85'
   type: position_controllers/GripperActionController
