@@ -33,7 +33,7 @@
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <mesh filename="package://robotiq_description/meshes/hande/hand-e.dae" scale="1.0 1.0 1.0"/>
+          <mesh filename="package://robotiq_description/meshes/hande/hand-e-collision.dae" scale="1.0 1.0 1.0"/>
         </geometry>
       </collision>
     </link>
@@ -55,7 +55,7 @@
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <mesh filename="package://robotiq_description/meshes/hande/finger_1.dae" scale="1.0 1.0 1.0"/>
+          <mesh filename="package://robotiq_description/meshes/hande/finger_1-collision.dae" scale="1.0 1.0 1.0"/>
         </geometry>
       </collision>
     </link>
@@ -77,7 +77,7 @@
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <mesh filename="package://robotiq_description/meshes/hande/finger_2.dae" scale="1.0 1.0 1.0"/>
+          <mesh filename="package://robotiq_description/meshes/hande/finger_2-collision.dae" scale="1.0 1.0 1.0"/>
         </geometry>
       </collision>
     </link>
@@ -93,18 +93,18 @@
     </gazebo>
     <joint name="${prefix}hande_left_finger_joint" type="prismatic">
       <origin rpy="0 0 0" xyz="0 0 0.099"/>
-      <parent link="hand_e_link"/>
-      <child link="hande_left_finger"/>
+      <parent link="${prefix}hand_e_link"/>
+      <child link="${prefix}hande_left_finger"/>
       <axis xyz="-1 0 0"/>
       <limit effort="130" lower="0" upper="0.025" velocity="0.15"/>
     </joint>
     <joint name="${prefix}hande_right_finger_joint" type="prismatic">
       <origin rpy="0 0 0" xyz="0 0 0.099"/>
-      <parent link="hand_e_link"/>
-      <child link="hande_right_finger"/>
+      <parent link="${prefix}hand_e_link"/>
+      <child link="${prefix}hande_right_finger"/>
       <axis xyz="1 0 0"/>
       <limit effort="130" lower="0" upper="0.025" velocity="0.15"/>
-      <mimic joint="hande_left_finger_joint" multiplier="1" offset="0"/>
+      <mimic joint="${prefix}hande_left_finger_joint" multiplier="1" offset="0"/>
     </joint>
       
       <!-- Improve grasping physics -->
