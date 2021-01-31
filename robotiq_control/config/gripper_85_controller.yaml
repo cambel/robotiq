@@ -1,4 +1,5 @@
 # Gripper controller
+gripper_type: '85'
 gripper_controller:
   type: position_controllers/GripperActionController
   joint: robotiq_85_left_knuckle_joint
