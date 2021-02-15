@@ -1,6 +1,6 @@
 # Gripper controller
-gripper_type: 'hand-e'
 gripper_controller:
+  gripper_type: 'hand-e'
   type: position_controllers/GripperActionController
   joint: hande_right_finger_joint
   action_monitor_rate: 20
