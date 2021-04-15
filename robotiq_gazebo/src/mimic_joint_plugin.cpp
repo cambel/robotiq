@@ -47,9 +47,7 @@ MimicJointPlugin::MimicJointPlugin()
 
 MimicJointPlugin::~MimicJointPlugin()
 {
-#if GAZEBO_MAJOR_VERSION < 9    
-  event::Events::DisconnectWorldUpdateBegin(this->updateConnection);
-#endif
+  this->updateConnection.reset();
 
   kill_sim = true;
 }
@@ -169,35 +167,20 @@ void MimicJointPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf )
 
 void MimicJointPlugin::UpdateChild()
 {
-#if GAZEBO_MAJOR_VERSION >= 9
   static ros::Duration period(world_->Physics()->GetMaxStepSize());
 
   // Set mimic joint's angle based on joint's angle
   double angle = joint_->Position(0)*multiplier_+offset_;
+  
   if(abs(angle-mimic_joint_->Position(0))>=sensitiveness_)
-#else
-  static ros::Duration period(world_->GetPhysicsEngine()->GetMaxStepSize());
-
-  // Set mimic joint's angle based on joint's angle
-  double angle = joint_->GetAngle(0).Radian()*multiplier_+offset_;
-  if(abs(angle-mimic_joint_->GetAngle(0).Radian())>=sensitiveness_)
-#endif
   {
     if(has_pid_)
     {
-#if GAZEBO_MAJOR_VERSION >= 9
       double a = mimic_joint_->Position(0);
-#else
-      double a = mimic_joint_->GetAngle(0).Radian();
-#endif
       if(a!=a)
         a = angle;
       double error = angle-a;
-#if GAZEBO_MAJOR_VERSION >= 9
       double effort = ignition::math::clamp(pid_.computeCommand(error, period), -max_effort_, max_effort_);
-#else
-      double effort = gazebo::math::clamp(pid_.computeCommand(error, period), -max_effort_, max_effort_);
-#endif
     }
     else
     {

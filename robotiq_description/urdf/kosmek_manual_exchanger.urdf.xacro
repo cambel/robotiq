@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!--
+  Author: Cristian Beltran
+-->
+  <xacro:macro name="kosmek_exchanger" params="prefix parent *origin">
+
+    <joint name="${prefix}kosmek_base_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${prefix}SXRZ0030_MF4_link"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+
+    <link name="${prefix}SXRZ0030_MF4_link">
+      <inertial>
+        <origin rpy="0 0 0" xyz="-0.033487 -0.000245 0.000000"/>
+        <mass value="0.0058"/>
+        <inertia ixx="1.0" ixy="0" ixz="-0.000012" iyy="1.0" iyz="0.000002" izz="1.0"/>
+      </inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robotiq_description/meshes/exchanger/SXRZ0030-MF4.stl" scale="1.0 1.0 1.0"/>
+        </geometry>
+        <material name="Dark">
+          <color rgba=".1 0.1 0.1 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robotiq_description/meshes/exchanger/SXRZ0030-MF4.stl" scale="1.0 1.0 1.0"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="${prefix}SXR0030_TF4_link">
+      <inertial>
+        <origin rpy="0 0 0" xyz="-0.037181 0.000112 0.000000"/>
+        <mass value="0.0085"/>
+        <inertia ixx="0.999996" ixy="-0.002699" ixz="0.000006" iyy="0.999996" iyz="0.000011" izz="1.000000"/>
+      </inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robotiq_description/meshes/exchanger/SXR0030-TF4.stl" scale="1.0 1.0 1.0"/>
+        </geometry>
+        <material name="DarkGray">
+          <color rgba=".4 0.4 0.4 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robotiq_description/meshes/exchanger/SXR0030-TF4.stl" scale="1.0 1.0 1.0"/>
+        </geometry>
+      </collision>
+    </link>
+    <link name="${prefix}SXR0030_M_link">
+      <inertial>
+        <origin rpy="0 0 0" xyz="-0.010203 0.000248 0.051999"/>
+        <mass value="0.0075"/>
+        <inertia ixx="1.0" ixy="0.000113" ixz="-0.000007" iyy="1.0" iyz="0.0" izz="1.0"/>
+      </inertial>
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robotiq_description/meshes/exchanger/SXR0030-M.stl" scale="1.0 1.0 1.0"/>
+        </geometry>
+        <material name="Red">
+          <color rgba="0.4 0.0 0.0 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://robotiq_description/meshes/exchanger/SXR0030-M.stl" scale="1.0 1.0 1.0"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <gazebo reference="${prefix}SXR0030_M_link">
+      <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="${prefix}SXR0030_TF4_link">
+      <material>Gazebo/Grey</material>
+    </gazebo>
+    <gazebo reference="${prefix}SXRZ0030_MF4_link">
+      <material>Gazebo/Grey</material>
+    </gazebo>
+    <joint name="${prefix}SXR0030_M_link_joint" type="fixed">
+      <origin rpy="0 0 ${pi/2.0}" xyz="-0.021 0 0"/>
+      <parent link="SXRZ0030_MF4_link"/>
+      <child link="SXR0030_M_link"/>
+    </joint>
+    <joint name="${prefix}SXR0030_TF4_joint" type="fixed">
+      <origin rpy="0 0 ${-pi/2.0}" xyz="0 0.005 0.0"/>
+      <parent link="SXR0030_M_link"/>
+      <child link="SXR0030_TF4_link"/>
+    </joint>
+      
+  </xacro:macro>
+</robot>

@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<robot name="robotiq_85_gripper" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_85_gripper.urdf.xacro" />
-  <xacro:robotiq_85_gripper prefix=""/>
-</robot>
+<?xml version="1.0"?> 
+<robot name="robotiq_85_gripper" xmlns:xacro="http://ros.org/wiki/xacro"> 
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_85_gripper.urdf.xacro" /> 
+  <xacro:robotiq_85_gripper prefix=""/> 
+</robot> 
