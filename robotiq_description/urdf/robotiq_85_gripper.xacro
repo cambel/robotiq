@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 
 <robot name="robotiq_85_gripper" xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_85_gripper_cb.urdf.xacro" />
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_85_gripper.urdf.xacro" />
   
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"> 
