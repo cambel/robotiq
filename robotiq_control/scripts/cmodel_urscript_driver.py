@@ -20,7 +20,7 @@ def mainLoop(urscript_topic):
     status = gripper.getStatus()
     pub.publish(status)
     # Wait a little
-    rospy.sleep(0.05)
+    rospy.sleep(0.03)
 
 if __name__ == '__main__':
   rospy.init_node('cmodel_urscript_driver')

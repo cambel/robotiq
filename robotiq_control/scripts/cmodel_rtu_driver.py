@@ -23,11 +23,11 @@ def mainLoop(device):
     status = gripper.getStatus()
     pub.publish(status)
     # Wait a little
-    rospy.sleep(0.05)
+    rospy.sleep(0.03)
     # Send the most recent command
     gripper.sendCommand()
     # Wait a little
-    rospy.sleep(0.05)
+    rospy.sleep(0.03)
 
 if __name__ == '__main__':
   rospy.init_node('cmodel_rtu_driver')
