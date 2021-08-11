@@ -1,7 +1,7 @@
 gripper_action_controller:
   # Feedback rate in Hz
   publish_rate: 100
-  min_gap_counts: 255
+  min_gap_counts: 224
   counts_to_meters: 0.8
   # Gripper width in meters [0, 0.140]
   min_gap:    0.0
