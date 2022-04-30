@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
   <!--
-  Author: Cristian Beltran
+  Author: Cristian C Beltran-Hernandez
 -->
   <xacro:macro name="kosmek_exchanger" params="prefix parent *origin">
 

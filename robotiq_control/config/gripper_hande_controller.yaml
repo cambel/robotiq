@@ -8,3 +8,7 @@ gripper_controller:
   max_effort: 100
   stall_velocity_threshold: 0.001
   stall_timeout: 1.0
+  
+gazebo_ros_control:
+  pid_gains:
+    hande_left_finger_joint:  {p: 10, d: 1, i: 0, i_clamp: 1, antiwindup: true}
