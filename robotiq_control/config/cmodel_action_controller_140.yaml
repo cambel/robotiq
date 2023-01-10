@@ -2,13 +2,13 @@ gripper_action_controller:
   # Feedback rate in Hz
   publish_rate: 100
   min_gap_counts: 224
-  counts_to_meters: 0.8
+  counts_to_meters: 0.6894051
   # Gripper width in meters [0, 0.140]
   min_gap:    0.0
   max_gap:    0.140
   # Gripper speed in m/s [0.03, 0.25]
-  min_speed:  0.03
-  max_speed:  0.25
+  min_speed:  0.02
+  max_speed:  0.15
   # Gripper force in N. [10, 125]
   min_force:  10.0
   max_force:  125.0

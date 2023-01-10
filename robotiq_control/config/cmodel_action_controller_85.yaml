@@ -7,10 +7,10 @@ gripper_action_controller:
   min_gap:    0.0
   max_gap:    0.085
   # Gripper speed in m/s [0.03, 0.25]
-  min_speed:  0.013
-  max_speed:  0.1
+  min_speed:  0.03
+  max_speed:  0.25
   # Gripper force in N. [10, 125]
-  min_force:  40.0
-  max_force:  100.0
+  min_force:  10.0
+  max_force:  250.0
   # Joint name
   joint_name: finger_joint
