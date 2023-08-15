@@ -1,15 +1,15 @@
 # robotiq
 
-ROS metapackage developed by the [Control Robotics Intelligence Group](http://www.ntu.edu.sg/home/cuong/) from the [Nanyang Technological University, Singapore](http://www.ntu.edu.sg).
+ROS metapackage based on the package developed by the [Control Robotics Intelligence Group](http://www.ntu.edu.sg/home/cuong/) from the [Nanyang Technological University, Singapore](http://www.ntu.edu.sg).
 
 ## Setup
 
   * Robotiq 85 Gripper with K-1363 Controller. (Modbus TCP/IP)
-
+  * Robotiq Hand-e (Universal Robots e-series)
 
 ## Maintainer
 
-[Francisco Suárez Ruiz](fsuarez6.github.io)
+[Cristian Beltran](cristianbehe.me)
 
 ## Documentation
 
@@ -18,6 +18,8 @@ ROS metapackage developed by the [Control Robotics Intelligence Group](http://ww
 
 ## Installation
 
+see [ur3-repo](https://github.com/cambel/ur3) for a complete example using the UR3e robot in Gazebo simulator.
+
 Go to your ROS working directory. e.g.
 ```{bash}
 cd ~/catkin_ws/src
@@ -25,8 +27,7 @@ cd ~/catkin_ws/src
 
 Clone these repository:
 ```{bash}
-git clone https://github.com/crigroup/robotiq.git
-git clone https://github.com/crigroup/openrave_catkin.git
+git clone https://github.com/cambel/robotiq.git
 ```
 
 Install any missing dependencies using rosdep:
