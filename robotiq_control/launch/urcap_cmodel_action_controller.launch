@@ -3,7 +3,7 @@
   <!-- launch file parameters -->  
   <arg name="address" default="192.168.1.41" />
   
-  <arg name="namespace" default="gripper" />
+  <arg name="namespace" default="/" />
   <arg name="gripper_prefix" default="" />  
   <arg name="config"		default="cmodel_action_controller" />
   
