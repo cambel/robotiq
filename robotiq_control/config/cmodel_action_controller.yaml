@@ -13,4 +13,4 @@ gripper_action_controller:
   min_force:  40.0
   max_force:  100.0
   # Joint name
-  joint_name: robotiq_85_left_knuckle_joint
+  joint_name: finger_joint

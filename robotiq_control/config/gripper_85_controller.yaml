@@ -2,7 +2,7 @@
 gripper_controller:
   gripper_type: '85'
   type: position_controllers/GripperActionController
-  joint: robotiq_85_left_knuckle_joint
+  joint: finger_joint
   action_monitor_rate: 20
   goal_tolerance: 0.002
   max_effort: 100

@@ -31,7 +31,7 @@ class CModelActionController(object):
     self._max_speed = read_parameter(self._ns + 'gripper_action_controller/max_speed', 0.1)
     self._min_force = read_parameter(self._ns + 'gripper_action_controller/min_force', 40.0)
     self._max_force = read_parameter(self._ns + 'gripper_action_controller/max_force', 100.0)
-    self._joint_name = read_parameter(self._ns + 'gripper_action_controller/joint_name', 'robotiq_85_left_knuckle_joint')
+    self._joint_name = read_parameter(self._ns + 'gripper_action_controller/joint_name', 'finger_joint')
     self._gripper_prefix = read_parameter(self._ns + 'gripper_prefix', "")   # Used for updating joint state
     # Configure and start the action server
     self._status = CModelStatus()

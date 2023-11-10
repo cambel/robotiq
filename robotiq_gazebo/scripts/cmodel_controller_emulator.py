@@ -54,7 +54,7 @@ class ControllerEmulator(object):
   
   def cb_joint_states(self, msg):
     for joint_name in msg.name:
-      if joint_name == 'robotiq_85_left_knuckle_joint':
+      if joint_name == 'finger_joint':
         idx = msg.name.index(joint_name)
         self.position = msg.position[idx]
         break
