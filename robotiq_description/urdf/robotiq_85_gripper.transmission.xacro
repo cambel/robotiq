@@ -10,7 +10,6 @@
       </joint>
       <actuator name="${prefix}robotiq_85_left_knuckle_motor">
         <mechanicalReduction>1</mechanicalReduction>
-        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
       </actuator>
     </transmission>
     
