@@ -91,7 +91,7 @@ class CModelActionController(object):
         feedback = CModelCommandFeedback()
         feedback.activated = self._ready()
         feedback.position = self._get_position()
-        feedback.velocity = self.current_velocity
+        # feedback.velocity = self.current_velocity
         feedback.stalled = self._stalled()
         # # feedback.reached_goal = self._reached_goal(position)
         try:

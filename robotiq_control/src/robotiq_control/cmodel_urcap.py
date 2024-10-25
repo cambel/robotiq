@@ -141,8 +141,11 @@ class RobotiqCModelURCap:
         var_name, value_str = data.decode(self.ENCODING).split()
         if var_name != variable:
             raise ValueError("Unexpected response " + str(data) + " does not match '" + variable + "'")
-        value = int(value_str)
-        return value
+        try:
+            value = int(value_str)
+            return value
+        except:
+            raise ValueError("Something went wrong with the response from the gripper")
 
     @staticmethod
     def _is_ack(data):
