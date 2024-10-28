@@ -5,12 +5,12 @@ gripper_action_controller:
   counts_to_meters: 0.026
   # Gripper width in meters [0, 0.026]
   min_gap:    0.0
-  max_gap:    0.026
+  max_gap:    0.05
   # Gripper speed in m/s [0.02, 0.15]
   min_speed:  0.02
   max_speed:  0.15
   # Gripper force in N. [60, 130]
-  min_force:  60.0
+  min_force:  20.0
   max_force:  130.0
   # Joint name
-  joint_name: robotiq_hande_joint_finger
+  joint_name: hande_right_finger_joint
