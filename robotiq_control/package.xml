@@ -13,7 +13,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>rospy</build_depend>
   
-  <run_depend>python-pymodbus</run_depend>
+  <run_depend>python3-pymodbus</run_depend>
   <run_depend>robotiq_description</run_depend>
   <run_depend>robotiq_msgs</run_depend>
 </package>
