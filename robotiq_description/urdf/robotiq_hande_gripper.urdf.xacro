@@ -5,7 +5,7 @@
   Author: Cristian Beltran
 -->
 
-  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_hande_gripper.transmission.xacro" />
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_arg2f_transmission.xacro" /> 
   
   <xacro:macro name="robotiq_hande_gripper" params="prefix parent *origin">
 
@@ -91,7 +91,7 @@
     <gazebo reference="${prefix}hande_left_finger">
       <material>Gazebo/Grey</material>
     </gazebo>
-    <joint name="${prefix}hande_left_finger_joint" type="prismatic">
+    <joint name="${prefix}finger_joint" type="prismatic">
       <origin rpy="0 0 0" xyz="0 0 0.099"/>
       <parent link="${prefix}hand_e_link"/>
       <child link="${prefix}hande_left_finger"/>
@@ -104,7 +104,7 @@
       <child link="${prefix}hande_right_finger"/>
       <axis xyz="1 0 0"/>
       <limit effort="130" lower="0" upper="0.025" velocity="0.15"/>
-      <mimic joint="${prefix}hande_left_finger_joint" multiplier="1" offset="0"/>
+      <mimic joint="${prefix}finger_joint" multiplier="1" offset="0"/>
     </joint>
       
       <!-- Improve grasping physics -->
@@ -123,7 +123,7 @@
         <minDepth>0.001</minDepth>
       </gazebo>
     
-    <xacro:robotiq_hande_gripper_transmission prefix="${prefix}" />
+    <xacro:robotiq_arg2f_transmission prefix="${prefix}"/> 
 
   </xacro:macro>
 </robot>

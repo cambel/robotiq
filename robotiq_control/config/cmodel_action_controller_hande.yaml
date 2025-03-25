@@ -13,4 +13,4 @@ gripper_action_controller:
   min_force:  20.0
   max_force:  130.0
   # Joint name
-  joint_name: hande_right_finger_joint
+  joint_name: finger_joint
